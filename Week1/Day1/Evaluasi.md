@@ -1,0 +1,4 @@
+1.kalo http method get aja udah bisa manispulasi data (creat,update,delete),kenapa harus ada method yang lain seperti post put dan delete 
+jawab:
+method get emng bisa memanipulasi data tapi penggunaan get saja tanpa method lain itu tidak aman dan di anggap melanggar best practices,
+get itu mengirim kan data melalui url yang berarti data sensitive kita seperti nama dan pasword bisa di lihat di log server, bar adres browser dan lain lain yang membuat nya jadi tidak aman,sedangkan pengunaan creat,update,dan delet itu lebih aman karena melakukan pengiriman data mealalui  body sehingga data sensitif kita aman dan tidak terlihat di log server, bar adres browser dan lain lain
