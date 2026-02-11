@@ -1,0 +1,32 @@
+import { ProductService } from "#services/product.service";
+import { asyncHandler } from "#utils/async.handler";
+import { successResponse } from "#utils/response";
+export const getAllProducts = asyncHandler(async (_req, res) => {
+    const products = ProductService.getAll();
+    return successResponse(res, 'Daftar produk', products);
+});
+export const getProductById = asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id);
+    const product = ProductService.getById(id);
+    return successResponse(res, 'produk ditemukan', product);
+});
+export const createProducts = asyncHandler(async (req, res) => {
+    const product = ProductService.create(req.body);
+    return successResponse(res, 'produk berhasil ditambahkan', product, null, 201);
+});
+export const updateProducts = asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id);
+    const product = ProductService.update(id, req.body);
+    return successResponse(res, 'produk berhasil diupdate', product);
+});
+export const deleteProducts = asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id);
+    const product = ProductService.delete(id);
+    return successResponse(res, 'produk berhasil duihapus', product);
+});
+export const searchProducts = asyncHandler(async (req, res) => {
+    const { name, max_price } = req.query;
+    const product = ProductService.search(name, max_price ? Number(max_price) : undefined);
+    return successResponse(res, 'hasil pencarian', product);
+});
+//# sourceMappingURL=product.controller.js.map
