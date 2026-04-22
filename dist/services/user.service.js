@@ -1,44 +1,47 @@
-import { users } from "#models/user";
-export class userService {
-    static getAll() {
-        return users;
+import prisma from "#utils/prisma";
+import bcrypt from "bcrypt";
+export class UserService {
+    static async getAll() {
+        return await prisma.user.findMany({
+            where: {
+                deletedAt: null
+            }
+        });
     }
-    static getById(id) {
-        const user = users.find((p) => p.id === id);
-        if (!user)
-            throw new Error("user dengan id tersebut tidak ditemukan");
-        return user;
+    static async getById(id) {
+        return await prisma.user.findUnique({
+            where: {
+                id,
+                deletedAt: null
+            }
+        });
     }
-    static create(data) {
-        const newUsers = {
-            id: users.length + 1,
-            ...data,
-        };
-        users.push(newUsers);
-        return newUsers;
+    static async create(data) {
+        return await prisma.user.create({
+            data: {
+                ...data,
+                password_hash: await bcrypt.hash(data.password, 10)
+            }
+        });
     }
-    static update(id, data) {
-        const index = users.findIndex((p) => p.id === id);
-        if (index === -1)
-            throw new Error("user tidak di temukan");
-        users[index] = { ...users[index], ...data };
-        return users[index];
+    static async update(id, data) {
+        return await prisma.user.update({
+            where: {
+                id,
+                deletedAt: null
+            },
+            data
+        });
     }
-    static delete(id) {
-        const index = users.findIndex(p => p.id === id);
-        if (index === -1)
-            throw new Error('produk tidak ditemukan');
-        return users.splice(index, 1)[0];
-    }
-    static search(name, maxPrice) {
-        let result = users;
-        if (name) {
-            result = result.filter(p => p.nama.toLowerCase().includes(name.toLowerCase()));
-        }
-        if (maxPrice) {
-            result = result.filter(p => p.umur <= maxPrice);
-        }
-        return result;
+    static async delete(id) {
+        return await prisma.user.update({
+            where: {
+                id
+            },
+            data: {
+                deletedAt: new Date()
+            }
+        });
     }
 }
 //# sourceMappingURL=user.service.js.map

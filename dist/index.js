@@ -1,7 +1,7 @@
 import app from "#app";
 import config from '#utils/env';
 app.listen(config.PORT, () => {
-    console.log(`Server E-Commerce HARI 4 jalan di http://localhost:${config.PORT}`);
-    console.log(`Jangan lupa kirim header: X-API-Key: secret-api-key-123`);
+    console.log(`Server jalan → http://localhost:${config.PORT}`);
+    console.log(`Coba buka semua route di atas pakai Postman!`);
 });
 //# sourceMappingURL=index.js.map

@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
-export declare const getAllUser: (req: Request, res: Response, next: import("express").NextFunction) => void;
-export declare const getUserById: (req: Request, res: Response, next: import("express").NextFunction) => void;
-export declare const createUser: (req: Request, res: Response, next: import("express").NextFunction) => void;
-export declare const updateUser: (req: Request, res: Response, next: import("express").NextFunction) => void;
-export declare const deleteUser: (req: Request, res: Response, next: import("express").NextFunction) => void;
-export declare const searchUser: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const index: (_req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const show: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const store: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const update: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const destroy: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
 //# sourceMappingURL=user.control.d.ts.map

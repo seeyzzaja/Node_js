@@ -1,14 +1,61 @@
-import { type Users } from "#models/user";
-export declare class userService {
-    static getAll(): Users[];
-    static getById(id: number): Users;
+export declare class UserService {
+    static getAll(): Promise<{
+        name: string;
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        email: string;
+        password_hash: string;
+        role: string;
+    }[]>;
+    static getById(id: number): Promise<{
+        name: string;
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        email: string;
+        password_hash: string;
+        role: string;
+    } | null>;
     static create(data: {
-        nama: string;
-        umur: number;
-        asal: string;
-    }): Users;
-    static update(id: number, data: any): Users | undefined;
-    static delete(id: number): Users | undefined;
-    static search(name?: string, maxPrice?: number): Users[];
+        name: string;
+        email: string;
+        password: string;
+        role?: string;
+    }): Promise<{
+        name: string;
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        email: string;
+        password_hash: string;
+        role: string;
+    }>;
+    static update(id: number, data: {
+        name?: string;
+        email?: string;
+    }): Promise<{
+        name: string;
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        email: string;
+        password_hash: string;
+        role: string;
+    }>;
+    static delete(id: number): Promise<{
+        name: string;
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        email: string;
+        password_hash: string;
+        role: string;
+    }>;
 }
 //# sourceMappingURL=user.service.d.ts.map

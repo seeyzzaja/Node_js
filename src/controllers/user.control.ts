@@ -1,42 +1,54 @@
-import type { Request,Response } from "express";
-import { asyncHandler } from "#utils/async.handler";
-import { successResponse } from "#utils/response";
-import { userService } from "#services/user.service";
+import { UserService } from "#services/user.service";
+import { errorResponse, successResponse } from "#utils/response";
+import type { Request, Response } from "express";
 
-export const getAllUser =asyncHandler(async(_req:Request,res:Response)=>{
-    const user =userService.getAll()
-    return successResponse(res,'Daftar user', user)
-})
+export const index = async (_req: Request, res: Response) => {
+    try {
+        const users = await UserService.getAll();
+        return successResponse(res, "Get all users success", users);
+    } catch (error) {
+        return errorResponse(res, `Get all users failed: ${error}`, 500);
+    }
+};
 
-export const getUserById=asyncHandler(async(req:Request,res:Response)=>{
-    const id = parseInt(req.params.id as string)
-    const user =userService.getById(id)
-    return successResponse(res,'user ditemukan',user)
-})
+export const show = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const user = await UserService.getById(Number(id));
+        if (!user) return errorResponse(res, "User not found", 404);
+        return successResponse(res, "Get user detail success", user);
+    } catch (error) {
+        return errorResponse(res, `Get user detail failed: ${error}`, 500);
+    }
+};
 
-export const createUser=asyncHandler(async(req:Request,res:Response)=>{
-    const user=userService.create(req.body)
-    return successResponse(res,'user berhasil ditambahkan',user,null,201)
-})
+export const store = async (req: Request, res: Response) => {
+    try {
+        const { name, email, password } = req.body;
+        const user = await UserService.create({ name, email, password });
+        return successResponse(res, "Create user success", user, null, 201);
+    } catch (error) {
+        return errorResponse(res, `Create user failed: ${error}`, 500);
+    }
+};
 
-export const updateUser=asyncHandler(async(req:Request,res:Response)=>{
-    const id = parseInt(req.params.id as string)
-    const user=userService.update(id,req.body)
-    return successResponse(res,'user berhasil diupdate',user)
-})
+export const update = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { name, email } = req.body;
+        const user = await UserService.update(Number(id), { name, email });
+        return successResponse(res, "Update user success", user);
+    } catch (error) {
+        return errorResponse(res, `Update user failed: ${error}`, 500);
+    }
+};
 
-export const deleteUser=asyncHandler(async(req:Request,res:Response)=>{
-    const id =parseInt(req.params.id as string)
-    const user = userService.delete(id)
-    return successResponse (res,'user berhasil duihapus',user)
-
-})
-
-export const searchUser =asyncHandler(async(req:Request,res:Response)=>{
-    const {name,max_price} = req.query
-    const user =userService.search(
-        name as string,
-        max_price?Number(max_price):undefined
-    )
-    return successResponse(res,'hasil pencarian',user)
-})
+export const destroy = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        await UserService.delete(Number(id));
+        return successResponse(res, "Delete user success");
+    } catch (error) {
+        return errorResponse(res, `Delete user failed: ${error}`, 500);
+    }
+};

@@ -1,44 +1,81 @@
-import { products } from "#models/product.model";
+import prisma from "#utils/prisma";
 export class ProductService {
-    static getAll() {
-        return products;
+    static async getAll(params) {
+        const { page, limit, search, sortBy, sortOrder } = params;
+        const skip = (page - 1) + limit;
+        const whereClause = {
+            deletedAt: null
+        };
+        if (search?.name) {
+            whereClause.name = {
+                contains: search.name,
+                mode: 'insensitive'
+            };
+        }
+        if (search?.maxPrice) {
+            whereClause.price = {
+                lte: search.maxPrice
+            };
+        }
+        const products = await prisma.products.findMany({
+            skip: skip,
+            take: limit,
+            where: whereClause,
+            orderBy: sortBy ? { [sortBy]: sortOrder || 'desc' } : { createdAt: 'desc' },
+            include: {
+                category: true,
+            },
+        });
+        const totalItems = await prisma.products.count({
+            where: whereClause
+        });
+        return {
+            products,
+            totalItems,
+            totalPages: Math.ceil(totalItems / limit),
+            currentPage: page
+        };
     }
-    static getById(id) {
-        const product = products.find(p => p.id === id);
-        if (!product)
-            throw new Error('produk dengan id itu tidak di temukan');
+    static async getById(id) {
+        const product = await prisma.products.findUnique({
+            where: {
+                id,
+                deletedAt: null
+            },
+            include: {
+                category: true,
+            }
+        });
+        if (!product) {
+            throw new Error("Produk tidak ditemukan");
+        }
         return product;
     }
-    static create(data) {
-        const newProduct = {
-            id: products.length + 1,
-            ...data
-        };
-        products.push(newProduct);
-        return newProduct;
+    static async create(data) {
+        return await prisma.products.create({ data, include: { category: true } });
     }
-    static update(id, data) {
-        const index = products.findIndex(p => p.id === id);
-        if (index === -1)
-            throw new Error('produk tidak ditemukan');
-        products[index] = { ...products[index], ...data };
-        return products[index];
+    static async update(id, data) {
+        await this.getById(id);
+        return await prisma.products.update({
+            where: {
+                id,
+                deletedAt: null
+            },
+            data,
+            include: { category: true }
+        });
     }
-    static delete(id) {
-        const index = products.findIndex(p => p.id === id);
-        if (index === -1)
-            throw new Error('produk tidak ditemukan');
-        return products.splice(index, 1)[0];
-    }
-    static search(name, maxPrice) {
-        let result = products;
-        if (name) {
-            result = result.filter(p => p.nama.toLowerCase().includes(name.toLowerCase()));
-        }
-        if (maxPrice) {
-            result = result.filter(p => p.harga <= maxPrice);
-        }
-        return result;
+    static async delete(id) {
+        await this.getById(id);
+        return prisma.products.update({
+            where: {
+                id,
+                deletedAt: null
+            },
+            data: {
+                deletedAt: new Date()
+            }
+        });
     }
 }
 //# sourceMappingURL=product.service.js.map
